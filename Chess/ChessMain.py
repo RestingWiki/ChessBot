@@ -1,3 +1,17 @@
+"""
+Chess Engine Project
+
+This project was inspired by and built following the tutorial series by Eddie Sharick on creating a chess engine in Python.
+Tutorial Source: https://www.youtube.com/playlist?list=PLBwF487qi8MGU81nDGaeNE1EnNEPYWKY_
+
+All credit for the foundational knowledge and guidance goes to Eddie Sharick.
+Any modifications or extensions are my own.
+
+Author: [RestingKiwi]
+Date: [I forgor]
+"""
+
+
 # Import the pygame module and ChessEngine from the Chess package
 import pygame as pg
 from Chess import ChessEngine
@@ -139,6 +153,7 @@ def drawPieces(screen, board):
             if piece != "--":       # Not empty square
                 screen.blit(IMAGES[piece], pg.Rect(c*SQ_SIZE, r*SQ_SIZE,SQ_SIZE,SQ_SIZE))
     pass
+
 
 '''
 Draw the selection square

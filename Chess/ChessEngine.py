@@ -19,15 +19,15 @@ filesToCols = {"a": 0, "b": 1, "c": 2, "d": 3,
 colsToFiles = {v: k for k, v in filesToCols.items()}
 
 # Piece move direction
-diagonalDirection = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
-straightDirection = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-omniDirection = diagonalDirection + straightDirection
+diagonalDirection = [(-1, -1), (-1, 1), (1, -1), (1, 1)]            # Bishop
+straightDirection = [(-1, 0), (1, 0), (0, -1), (0, 1)]              # Rook
+omniDirection = diagonalDirection + straightDirection               # King, Queen
 knightDirections = [
     (-2, -1), (-2, 1),  # Up left, Up right
     (-1, -2), (-1, 2),  # Left up, Right up
     (1, -2), (1, 2),  # Left down, Right down
     (2, -1), (2, 1)  # Down left, Down right
-]
+]                                            # Knight
 
 # Mapping from each piece to the direction they can move, Knight, Bishop, Rook, Queen, King
 mapDirection = {'N': knightDirections, 'B': diagonalDirection,
