@@ -29,8 +29,10 @@ knightDirections = [
     (2, -1), (2, 1)  # Down left, Down right
 ]
 
-# Mapping from each piece to the direction they can move, Knight, Bishop, Rook, Queen
-mapDirection = {'N': knightDirections, 'B': diagonalDirection, 'R': straightDirection, 'Q': omniDirection}
+# Mapping from each piece to the direction they can move, Knight, Bishop, Rook, Queen, King
+mapDirection = {'N': knightDirections, 'B': diagonalDirection,
+                'R': straightDirection, 'Q': omniDirection,
+                'K': omniDirection}
 
 
 class GameState:
@@ -40,7 +42,7 @@ class GameState:
             ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "wQ", "--", "--", "--", "--"],
+            ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
             ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
@@ -116,67 +118,29 @@ class GameState:
         pass
 
     def getRookMoves(self, r: int, c: int, moves):
-        piece = self.board[r][c]
-        enemy = 'b' if self.whiteToMove else 'w'
-
-        if (self.whiteToMove and piece[0] == 'w') or (not self.whiteToMove and piece[0] == 'b'):
-            for d in straightDirection:
-                for i in range(1, 8):
-                    # Find the end location
-                    endRow = r + i * d[0]
-                    endCol = c + i * d[1]
-
-                    if (0 <= endRow < 8) and (0 <= endCol < 8):
-
-                        if self.board[endRow][endCol] == "--":  # Empty square
-                            moves.append(Move((r, c), (endRow, endCol), self.board))
-
-                        elif self.board[endRow][endCol][0] == enemy:  # Enemy square, stop moving in that direction
-                            moves.append(Move((r, c), (endRow, endCol), self.board))
-                            break
-                        else:  # Allies square
-                            break
-        pass
+        self.__getSiegeMoves(r, c, moves, 8)
 
     def getBishopMoves(self, r: int, c: int, moves):
-        piece = self.board[r][c]
-        enemy = 'b' if self.whiteToMove else 'w'
-
-        if (self.whiteToMove and piece[0] == 'w') or (not self.whiteToMove and piece[0] == 'b'):
-            for d in diagonalDirection:
-                for i in range(1, 8):
-                    # Find the end location
-                    endRow = r + i * d[0]
-                    endCol = c + i * d[1]
-
-                    if (0 <= endRow < 8) and (0 <= endCol < 8):
-
-                        if self.board[endRow][endCol] == "--":  # Empty square
-                            moves.append(Move((r, c), (endRow, endCol), self.board))
-
-                        elif self.board[endRow][endCol][0] == enemy:  # Enemy square, stop moving in that direction
-                            moves.append(Move((r, c), (endRow, endCol), self.board))
-                            break
-                        else:  # Allies square
-                            break
+        self.__getSiegeMoves(r, c, moves,8)
 
     def getKnightMoves(self, r: int, c: int, moves):
-        pass
+        self.__getSiegeMoves(r, c, moves,8)
 
     def getQueenMoves(self, r: int, c: int, moves):
-        pass
+        self.__getSiegeMoves(r, c, moves, 8)
 
     def getKingMoves(self, r: int, c: int, moves):
-        print(omniDirection)
+        self.__getSiegeMoves(r, c, moves, 2)
+
         pass
 
-    def __getSiegeMoves(self, r: int, c: int, moves):
+    def __getSiegeMoves(self, r: int, c: int, moves, maxLength: int):
         piece = self.board[r][c]
         enemy = 'b' if self.whiteToMove else 'w'
 
         if (self.whiteToMove and piece[0] == 'w') or (not self.whiteToMove and piece[0] == 'b'):
             for d in mapDirection[piece[1]]:
-                for i in range(1, 8):
+                for i in range(1, maxLength):
                     # Find the end location
                     endRow = r + i * d[0]
                     endCol = c + i * d[1]
