@@ -84,9 +84,12 @@ class GameState:
 
         # White pawn to move
         if self.whiteToMove:
+            if r == 0:
+                return
+
             if self.board[r - 1][c] == "--":  # 1 square pawn advance
                 moves.append(Move((r, c), (r - 1, c), self.board))
-                if self.board[r - 2][c] == "--" and r == 6:  # 2 square pawn move advance
+                if r == 6 and self.board[r - 2][c] == "--" :  # 2 square pawn move advance
                     moves.append(Move((r, c), (r - 2, c), self.board))
 
             # Capture to the left
@@ -101,9 +104,11 @@ class GameState:
 
         # Black pawn to move
         if not self.whiteToMove:
+            if r == 7:
+                return
             if self.board[r + 1][c] == "--":  # 1 square pawn advance
                 moves.append(Move((r, c), (r + 1, c), self.board))
-                if self.board[r + 2][c] == "--" and r == 1:
+                if r == 1 and self.board[r + 2][c] == "--" :
                     moves.append(Move((r, c), (r + 2, c), self.board))
 
             # Capture to the left
@@ -155,7 +160,8 @@ class GameState:
                             break
                         else:  # Allies square
                             break
-
+                    else:
+                        break
 
     '''
     All moves without considering check
