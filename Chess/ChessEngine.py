@@ -129,7 +129,7 @@ class GameState:
         self.__getSiegeMoves(r, c, moves,8)
 
     def getKnightMoves(self, r: int, c: int, moves):
-        self.__getSiegeMoves(r, c, moves,8)
+        self.__getSiegeMoves(r, c, moves,2)
 
     def getQueenMoves(self, r: int, c: int, moves):
         self.__getSiegeMoves(r, c, moves, 8)

@@ -66,8 +66,6 @@ def main():
                 if len(playerClick) == 2:  # After 2nd click, make the move
                     if gs.board[playerClick[0][0]][playerClick[0][1]] != "--":
                         move = ChessEngine.Move(playerClick[0], playerClick[1], gs.board)
-                        print(move.getChessNotation())
-                        print(move.moveID)
 
                         # print(Color['r'] +"==========" + Color.reset)
                         # for m in validMoves:
@@ -78,11 +76,19 @@ def main():
                         else:
                             print(Color['p'] + "Black to move")
                         if move in validMoves:
+                            print(move.getChessNotation())
+                            print(move.moveID)
                             gs.makeMove(move)
                             moveMade = True
-                    sqSelected = ()
-                    playerClick = []
+                            sqSelected = ()
+                            playerClick = []
+                        else:
+                            playerClick = [sqSelected]
 
+                #  Deselect when making an invalid move
+                if len(playerClick) == 1 and gs.board[sqSelected[0]][sqSelected[1]] == "--":
+                    sqSelected  = ()
+                    playerClick = []
                 #  Generate possible moves
             # Key handler
             elif e.type == pg.KEYDOWN:
@@ -141,6 +147,7 @@ def drawSelectionSquare(screen, playerClick: [()]):
     if len(playerClick) == 1:
         square = playerClick[0]
         pg.draw.rect(screen,"brown2",pg.Rect(square[1]*SQ_SIZE, square[0]*SQ_SIZE,SQ_SIZE,SQ_SIZE))
+
 
 # Ensure this script block runs only if the script is executed directly (not imported)
 if __name__ == '__main__':
