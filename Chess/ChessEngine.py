@@ -4,6 +4,7 @@
 3. Logging (uses chess algebraic notation)
 """
 from nguyenpanda.swan import Color
+import time
 
 # Maps chess ranks to row indices
 ranksToRows = {"1": 7, "2": 6, "3": 5, "4": 4,
@@ -29,11 +30,17 @@ knightDirections = [
     (1, -2), (1, 2),  # Left down, Right down
     (2, -1), (2, 1)  # Down left, Down right
 ]  # Knight
+whitePawnDirection = [(1, -1), (1, 1)]
+blackPawnDirection = [(-1, -1), (-1, 1)]
 
 # Mapping from each piece to the direction they can move, Knight, Bishop, Rook, Queen, King
 mapDirection = {'N': knightDirections, 'B': diagonalDirection,
                 'R': straightDirection, 'Q': omniDirection,
                 'K': omniDirection}
+
+
+def isInBoard(r, c):
+    return 0 <= r <= 7 and 0 <= c <= 7
 
 
 class GameState:
@@ -99,21 +106,31 @@ class GameState:
     def getValidMoves(self):
         # 1.) Generate all possible move
         moves = self.getAllPossibleMoves()
+
+        if self.whiteToMove:
+            print(Color['r'] + "White generating moves" + Color.reset)
+        else:
+            print(Color['r'] + "Black generating moves" + Color.reset)
+
         # 2.) For each move, make the move
         for i in range(len(moves) - 1, -1, -1):  # traverse backward
             self.makeMove(moves[i])
             # 3.) Generate all opponents move
             # 4.) For of the opponent's move see if they attack the king
             self.whiteToMove = not self.whiteToMove
-            if self.__inCheck():
+            t0 = time.time()
+            if self.__inCheckAnhKhoa():
                 print("Removed move:" + str(moves[i]))
                 moves.remove(moves[i])
+            t1 = time.time()
+            if (t1 - t0) > 0:
+                print(str(t1-t0))
             self.whiteToMove = not self.whiteToMove
             self.undoMove()
         # 5.) If they do attack the king, remove it
 
         if self.whiteToMove:
-            print(Color['r'] +"White move count" + str(len(moves)) + Color.reset)
+            print(Color['r'] + "White move count" + str(len(moves)) + Color.reset)
         else:
             print(Color['r'] + "Black move count" + str(len(moves)) + Color.reset)
 
@@ -124,7 +141,7 @@ class GameState:
             else:
                 self.checkMate = False
 
-        else: # Just for undo-ing moves
+        else:  # Just for undo-ing moves
             self.checkMate = False
             self.staleMate = False
         return moves
@@ -136,6 +153,98 @@ class GameState:
         else:
             return self.__squareUnderAttack(self.blackKingLocation[0], self.blackKingLocation[1])
 
+    def __inCheckAnhKhoa(self):
+        # check from the white King position
+        # 1. Knights attack
+        # 2. Check Pawn attack
+        # 3. Rook/Bishop/Queen attack
+
+        if self.whiteToMove:
+            return self.__checkWhiteKing()
+        else:
+            return self.__checkBlackKing()
+
+    def __checkWhiteKing(self):
+        Kr, Kc = self.whiteKingLocation
+        Er, Ec = (0, 0)  # Enemy row, column
+        for d in knightDirections:
+            Er = Kr + d[0]
+            Ec = Kc + d[1]
+            if isInBoard(Er, Ec) and self.board[Er][Ec] == "bN":
+                return True
+
+        for d in whitePawnDirection:
+            Er = Kr + d[0]
+            Ec = Kc + d[1]
+            if isInBoard(Er, Ec) and self.board[Er][Ec] == "bp":
+                return True
+
+        for d in diagonalDirection:
+            for i in range(1, 8):
+                Er = Kr + d[0] * i
+                Ec = Kc + d[1] * i
+
+                if isInBoard(Er, Ec) and self.board[Er][Ec][0] == 'w':
+                    break
+
+                if isInBoard(Er, Ec) and (self.board[Er][Ec] == "bB" or
+                                          self.board[Er][Ec] == "bQ"):
+                    return True
+
+        for d in straightDirection:
+            for i in range(1, 8):
+                Er = Kr + d[0] * i
+                Ec = Kc + d[1] * i
+
+                if isInBoard(Er, Ec) and self.board[Er][Ec][0] == 'w':
+                    break
+
+                if isInBoard(Er, Ec) and (self.board[Er][Ec] == "bB" or
+                                          self.board[Er][Ec] == "bQ"):
+                    return True
+
+        return False
+
+    def __checkBlackKing(self):
+        Kr, Kc = self.blackKingLocation
+        Er, Ec = (0, 0)  # Enemy row, column
+        for d in knightDirections:
+            Er = Kr + d[0]
+            Ec = Kc + d[1]
+            if isInBoard(Er, Ec) and self.board[Er][Ec] == "wN":
+                return True
+
+        for d in whitePawnDirection:
+            Er = Kr + d[0]
+            Ec = Kc + d[1]
+            if isInBoard(Er, Ec) and self.board[Er][Ec] == "wp":
+                return True
+
+        for d in diagonalDirection:
+            for i in range(1, 8):
+                Er = Kr + d[0] * i
+                Ec = Kc + d[1] * i
+
+                if isInBoard(Er, Ec) and self.board[Er][Ec][0] == 'b':
+                    break
+
+                if isInBoard(Er, Ec) and (self.board[Er][Ec] == "wB" or
+                                          self.board[Er][Ec] == "wQ"):
+                    return True
+
+        for d in straightDirection:
+            for i in range(1, 8):
+                Er = Kr + d[0] * i
+                Ec = Kc + d[1] * i
+
+                if isInBoard(Er, Ec) and self.board[Er][Ec][0] == 'b':
+                    break
+
+                if isInBoard(Er, Ec) and (self.board[Er][Ec] == "wB" or
+                                          self.board[Er][Ec] == "wQ"):
+                    return True
+
+        return False
 
     # Determine if the enemy can attack the square
     # This does not modify the current player's turn
