@@ -85,7 +85,7 @@ def main():
                         # for m in validMoves:
                         #     print(Color['g'] + str(m))
                         # print(Color['r'] +"==========" + Color.reset)
-                        if not gs.whiteToMove:
+                        if gs.whiteToMove:
                             print(Color['c'] + "White to move")
                         else:
                             print(Color['p'] + "Black to move")
@@ -113,9 +113,8 @@ def main():
                     moveMade    = True
 
         if moveMade:
-            validMoves = gs.getAllPossibleMoves()
+            validMoves = gs.getValidMoves()
             moveMade   = False
-            validMoves     = gs.getAllPossibleMoves()
 
         drawGameState(screen, gs,playerClick)
         clock.tick(MAX_FPS)
