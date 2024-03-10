@@ -48,7 +48,7 @@ def main():
     clock      = pg.time.Clock()                         # Initialize a clock for controlling the game's frame rate
     gs         = ChessEngine.GameState()                    # Initialize the game state
 
-    validMoves = gs.getAllPossibleMoves()
+    validMoves = gs.getValidMoves()
     moveMade   = False
     sqSelected = ()                                 # Keep track of the last click of the user (tuple: (row, col))
     playerClick = []                                  # Keep track of the player's click (two tuples: [(6,4), (4,4)]) )
