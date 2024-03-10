@@ -40,7 +40,6 @@ mapDirection = {'N': knightDirections, 'B': diagonalDirection,
 def isInBoard(r, c):
     return 0 <= r <= 7 and 0 <= c <= 7
 
-
 class GameState:
     def __init__(self):
         self.board = [
