@@ -44,7 +44,7 @@ def isInBoard(r, c):
 class GameState:
     def __init__(self):
         self.board = [
-            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
+            ["bR", "--", "--", "--", "bK", "--", "--", "bR"],
             ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
             ["--", "--", "--", "--", "--", "--", "--", "--"],
@@ -103,6 +103,7 @@ class GameState:
     def getValidMoves(self):
         moves = []
         self.isInCheck, self.pins, self.checks = self.__inCheckAnhKhoa()
+        t0 = time.time()
         if self.whiteToMove:
             Kr, Kc = self.whiteKingLocation
         else:
@@ -122,7 +123,7 @@ class GameState:
                 # If not then try to block
                 else:
                     for i in range(1, 8):
-                        validSquare = (Kr + check[2] * 1, Kc + check[3] * i)
+                        validSquare = (Kr + check[2] * i, Kc + check[3] * i)
                         validSquares.append(validSquare)
                         if validSquare[0] == checkRow and validSquare[1] == checkCol:
                             break
@@ -135,7 +136,18 @@ class GameState:
                 self.__getKingMoves(Kr, Kc, moves)
         else:
             moves = self.getAllPossibleMoves()
-
+        t1 = time.time()
+        print(t1 - t0)
+        print("length of moves:" + str(len(moves)))
+        if len(moves) == 0:
+            if self.isInCheck:
+                self.checkMate = True
+                print("Checkmate!")
+            else:
+                self.StaleMate = True
+        else:
+            self.checkMate = False
+            self.staleMate = False
         return moves
 
     """
@@ -240,6 +252,7 @@ class GameState:
             if isInBoard(endRow, endCol):
                 endPiece = self.board[endRow][endCol]
                 if endPiece[0] == enemyColor and endPiece[1] == 'N':
+                    isInCheck = True
                     checks.append((endRow, endCol, d[0], d[1]))
 
         return isInCheck, pins, checks
@@ -424,7 +437,6 @@ class GameState:
                         moves.append(Move((r, c), (endRow, endCol), self.board))
 
     def __getKingMoves(self, r: int, c: int, moves):
-        print("Retrieving king possible moves")
         allyColor = 'w' if self.whiteToMove else 'b'
         for d in omniDirection:
             endRow = r + d[0]
@@ -438,8 +450,6 @@ class GameState:
                         self.whiteKingLocation = (endRow, endCol)
                     else:
                         self.blackKingLocation = (endRow, endCol)
-                        print("New Black king location: " +str(self.blackKingLocation))
-
 
                 inCheck, _, _ = self.__inCheckAnhKhoa()
                 if not inCheck:
