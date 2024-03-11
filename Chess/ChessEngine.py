@@ -437,29 +437,32 @@ class GameState:
                         moves.append(Move((r, c), (endRow, endCol), self.board))
 
     def __getKingMoves(self, r: int, c: int, moves):
-        allyColor = 'w' if self.whiteToMove else 'b'
+        allyColor = "w" if self.whiteToMove else "b"
         for d in omniDirection:
             endRow = r + d[0]
             endCol = c + d[1]
-
+            print("Current Ally " + allyColor)
             if isInBoard(endRow, endCol):
                 endPiece = self.board[endRow][endCol]
                 # Try to move the king to the new location and check for checks
+
                 if endPiece[0] != allyColor:
-                    if allyColor == 'w':
+                    print(endPiece)
+                    if self.whiteToMove:
                         self.whiteKingLocation = (endRow, endCol)
                     else:
                         self.blackKingLocation = (endRow, endCol)
 
-                inCheck, _, _ = self.__inCheckAnhKhoa()
-                if not inCheck:
-                    moves.append(Move((r, c), (endRow, endCol), self.board))
+                    inCheck, _, _ = self.__inCheckAnhKhoa()
+                    if not inCheck:
+                        print(str(Move((r, c), (endRow, endCol), self.board)))
+                        moves.append(Move((r, c), (endRow, endCol), self.board))
 
-                # Revert the king move testing
-                if allyColor == 'w':
-                    self.whiteKingLocation = (r, c)
-                else:
-                    self.blackKingLocation = (r, c)
+                    # Revert the king move testing
+                    if allyColor == 'w':
+                        self.whiteKingLocation = (r, c)
+                    else:
+                        self.blackKingLocation = (r, c)
 
     pass
 
